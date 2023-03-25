@@ -1,0 +1,7 @@
+micronaut:
+  application:
+    name: SLU_OSS_CheckIn
+netty:
+  default:
+    allocator:
+      max-order: 3
