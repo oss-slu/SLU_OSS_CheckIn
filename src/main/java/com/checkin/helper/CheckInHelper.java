@@ -9,7 +9,6 @@ import com.pi4j.io.pwm.Pwm;
 import com.pi4j.io.spi.SpiConfig;
 import io.micronaut.context.annotation.Prototype;
 import java.util.HashMap;
-import java.util.Objects;
 
 
 @Prototype
@@ -20,7 +19,6 @@ public class CheckInHelper {
 
     private HashMap<String, Boolean> names;
 
-    int[] yellow = new int[] {100, 100, 0};
     int[] red = new int[] {100, 0, 0};
     int[] green = new int[] {0, 100, 0};
 
@@ -40,23 +38,25 @@ public class CheckInHelper {
         names.put("Sinuo", false);
     }
 
-    public void mainLoop(){
+    public void mainLoop()
+        throws InterruptedException{
 
         lcd.writeText("Welcome to OSS");
+        Thread.sleep(3000);
         lcd.clearDisplay();
-        rgb.setColor(yellow);
-        lcd.writeText("Please scan your card");
 
         while(true) {
-            Object name = rfid.readFromCard();
+            lcd.writeText("Please scan your card");
             // if valid read
-            if (name != null) {
-                boolean result = this.names.get(name.toString());
+            try{
+                Object name = rfid.readFromCard();
+                boolean inMap = this.names.containsKey(name.toString());
                 // if in hashmap
-                if (!Objects.isNull(result)){
+                if (inMap){
                     rgb.setColor(green);
+                    boolean checkedIn = this.names.get(name.toString());
                     // if already checked in
-                    if (result) {
+                    if (checkedIn) {
                         this.names.put(name.toString(), false);
                         lcd.writeText("Goodbye " + name.toString());
                     }
@@ -70,24 +70,32 @@ public class CheckInHelper {
                 else{
                     rgb.setColor(red);
                     lcd.writeText("User: " + name.toString() + " not recognized.");
+                    Thread.sleep(1000);
                     lcd.writeText("Please request new user access");
                 }
             }
-            // if invalid read
-            else {
+            catch (NullPointerException e){
                 rgb.setColor(red);
                 lcd.writeText("Invalid card read. Please try again");
             }
+            rfid.resetScanner();
+            Thread.sleep(2000);
+            rgb.ledOff();
         }
     }
 
-    public boolean addNewCard(String name){
-        rgb.setColor(yellow);
-        lcd.writeText("Please scan a card for new user " + name);
+    public boolean addNewCard(String name)
+        throws InterruptedException{
+        rfid.resetScanner();
+        rgb.ledOff();
+        lcd.writeText("Please scan a card for " + name);
         rfid.writeToCard(name);
         rgb.setColor(green);
-        lcd.writeText("Write Successful");
         names.put(name, false);
+        lcd.writeText("Write Successful");
+        Thread.sleep(2000);
+        lcd.clearDisplay();
+        rgb.ledOff();
 
         return true;
     }

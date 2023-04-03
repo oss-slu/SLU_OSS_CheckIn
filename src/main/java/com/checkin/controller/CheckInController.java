@@ -24,7 +24,12 @@ public class CheckInController {
 
     @Get("/init")
     public void init(){
-        helper.mainLoop();
+        try {
+            helper.mainLoop();
+        }
+        catch (InterruptedException e){
+            System.out.println(e.toString());
+        }
     }
 
 //    @Get("/getAllCards")
@@ -42,9 +47,20 @@ public class CheckInController {
 //        return helper.getCheckedOut();
 //    }
 //
+//
+//    @Get("/removeCard")
+//    public boolean removeCard(String name){
+//        return helper.removeCard(name);
+//    }
+
     @Get("/newCard/{value}")
-    public void addNewCard(String name){
-        helper.addNewCard(name);
+    public void addNewCard(String value){
+        try {
+            helper.addNewCard(value);
+        }
+        catch (InterruptedException e){
+            System.out.println(e.toString());
+        }
     }
 
 }
