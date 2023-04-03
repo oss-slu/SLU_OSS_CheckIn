@@ -24,7 +24,7 @@ public class CheckInController {
 
     @Get("/init")
     public void init(){
-        helper.doNothing();
+        helper.mainLoop();
     }
 
 //    @Get("/getAllCards")
@@ -39,12 +39,12 @@ public class CheckInController {
 //
 //    @Get("/getCheckedOut")
 //    public List<String> getCheckedOut(){
-//        return helper.getCheckeOut();
+//        return helper.getCheckedOut();
 //    }
 //
-//    @Get("/newCard/{value}")
-//    public void addNewCard(String value){
-//        helper.addNewCard(value);
-//    }
+    @Get("/newCard/{value}")
+    public void addNewCard(String name){
+        helper.addNewCard(name);
+    }
 
 }
