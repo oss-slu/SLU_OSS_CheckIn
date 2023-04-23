@@ -7,11 +7,8 @@ import com.pi4j.context.Context;
 import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.io.pwm.Pwm;
 import com.pi4j.io.spi.SpiConfig;
-import io.micronaut.context.annotation.Prototype;
 import java.util.HashMap;
 
-
-@Prototype
 public class CheckInHelper {
     private final RFidHelper rfid;
     private final RGBLEDHelper rgb;
@@ -98,5 +95,9 @@ public class CheckInHelper {
         rgb.ledOff();
 
         return true;
+    }
+
+    public HashMap<String, Boolean> getAllCards(){
+        return this.names;
     }
 }

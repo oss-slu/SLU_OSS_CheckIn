@@ -1,5 +1,6 @@
 package com.checkin.controller;
 
+import java.util.HashMap;
 import com.checkin.helper.CheckInHelper;
 import com.pi4j.context.Context;
 import com.pi4j.io.i2c.I2CConfig;
@@ -9,8 +10,6 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import jakarta.inject.Named;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Controller("/checkin")
 public class CheckInController {
@@ -32,11 +31,11 @@ public class CheckInController {
         }
     }
 
-//    @Get("/getAllCards")
-//    public String getAllCards(){
-//        return helper.getName();
-//    }
-//
+   @Get("/getAllCards")
+   public HashMap<String, Boolean> getAllCards(){
+       return helper.getAllCards();
+   }
+
 //    @Get("/getCheckedIn")
 //    public List<String> getCheckedIn(){
 //        return helper.getCheckedIn();
