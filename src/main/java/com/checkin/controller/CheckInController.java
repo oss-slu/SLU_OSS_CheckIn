@@ -6,8 +6,11 @@ import com.pi4j.context.Context;
 import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.io.pwm.Pwm;
 import com.pi4j.io.spi.SpiConfig;
+
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
 import jakarta.inject.Named;
 
 
@@ -31,35 +34,34 @@ public class CheckInController {
         }
     }
 
-   @Get("/getAllCards")
-   public HashMap<String, Boolean> getAllCards(){
-       return helper.getAllCards();
-   }
+    @Get("/getAllCards")
+    public HashMap<String, Boolean> getAllCards(){
+        return helper.getAllCards();
+    }
 
-//    @Get("/getCheckedIn")
-//    public List<String> getCheckedIn(){
-//        return helper.getCheckedIn();
-//    }
-//
-//    @Get("/getCheckedOut")
-//    public List<String> getCheckedOut(){
-//        return helper.getCheckedOut();
-//    }
-//
-//
-//    @Get("/removeCard")
-//    public boolean removeCard(String name){
-//        return helper.removeCard(name);
-//    }
+    @Get("/getCheckedIn")
+    public String[] getCheckedIn(){
+        return helper.getCheckedIn();
+    }
 
-    @Get("/newCard/{value}")
-    public void addNewCard(String value){
+    @Get("/getCheckedOut")
+    public String[] getCheckedOut(){
+        return helper.getCheckedOut();
+    }
+
+    @Get("/removeCard/{name}")
+    public Boolean removeCard(String name){
+        return helper.removeCard(name);
+    }
+
+    @Post("/newCard/{name}")
+    public Boolean addNewCard(String name){
         try {
-            helper.addNewCard(value);
+            return helper.addNewCard(name);
         }
         catch (InterruptedException e){
             System.out.println(e.toString());
+            return false;
         }
     }
-
 }

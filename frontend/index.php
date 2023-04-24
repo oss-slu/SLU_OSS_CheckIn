@@ -40,7 +40,7 @@
 			</tr>
 			</thead>
 			<tbody>
-			<?php foreach($response as $key => $value) { ?>
+			<?php foreach($allCards as $key => $value) { ?>
 				<tr>
 				<td><?php echo $key; ?></td>
 				<td><?php echo $value ? 'In' : 'Out'; ?></td>

@@ -7,7 +7,10 @@ import com.pi4j.context.Context;
 import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.io.pwm.Pwm;
 import com.pi4j.io.spi.SpiConfig;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CheckInHelper {
     private final RFidHelper rfid;
@@ -55,12 +58,12 @@ public class CheckInHelper {
                     // if already checked in
                     if (checkedIn) {
                         this.names.put(name.toString(), false);
-                        lcd.writeText("Goodbye " + name.toString());
+                        lcd.writeText(name.toString() + " is now checked out.");
                     }
                     // if not checked in
                     else{
                         this.names.put(name.toString(), true);
-                        lcd.writeText("Hello " + name.toString());
+                        lcd.writeText(name.toString() + " is now checked in.");
                     }
                 }
                 // if not in hashmap
@@ -83,21 +86,65 @@ public class CheckInHelper {
 
     public boolean addNewCard(String name)
         throws InterruptedException{
+
         rfid.resetScanner();
         rgb.ledOff();
+        Boolean result;
         lcd.writeText("Please scan a card for " + name);
-        rfid.writeToCard(name);
-        rgb.setColor(green);
-        names.put(name, false);
-        lcd.writeText("Write Successful");
+
+        try{
+            rfid.writeToCard(name);
+            rgb.setColor(green);
+            names.put(name, false);
+            lcd.writeText("Write Successful");
+            result = true;
+        }
+        catch(NullPointerException e){
+            rgb.setColor(red);
+            lcd.writeText("Unable to write to card. Please try again");
+            result = false;
+        }
+
         Thread.sleep(2000);
         lcd.clearDisplay();
         rgb.ledOff();
 
-        return true;
+        return result;
+    }
+
+    public boolean removeCard(String name){
+        boolean result = this.names.containsKey(name);
+        if (result){
+            this.names.remove(name);
+        }
+        return result;
     }
 
     public HashMap<String, Boolean> getAllCards(){
         return this.names;
+    }
+
+    public String[] getCheckedIn(){
+        List<String> result = new ArrayList<>();
+        for (Map.Entry<String, Boolean> entry : names.entrySet()) {
+        if (entry.getValue()) {
+            result.add(entry.getKey());
+            }
+        }
+        String[] arr = result.toArray(new String[result.size()]);
+
+        return arr;
+    }
+
+    public String[] getCheckedOut(){
+        List<String> result = new ArrayList<>();
+        for (Map.Entry<String, Boolean> entry : names.entrySet()) {
+        if (!entry.getValue()) {
+            result.add(entry.getKey());
+            }
+        }
+        String[] arr = result.toArray(new String[result.size()]);
+
+        return arr;
     }
 }
