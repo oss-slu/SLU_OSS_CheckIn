@@ -7,10 +7,8 @@ import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.io.pwm.Pwm;
 import com.pi4j.io.spi.SpiConfig;
 
-import io.micronaut.http.HttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Post;
 import jakarta.inject.Named;
 
 
@@ -54,7 +52,7 @@ public class CheckInController {
         return helper.removeCard(name);
     }
 
-    @Post("/newCard/{name}")
+    @Get("/newCard/{name}")
     public Boolean addNewCard(String name){
         try {
             return helper.addNewCard(name);
