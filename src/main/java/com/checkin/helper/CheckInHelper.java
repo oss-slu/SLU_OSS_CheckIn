@@ -36,6 +36,8 @@ public class CheckInHelper {
         names.put("Greih", false);
         names.put("Austin", false);
         names.put("Sinuo", false);
+        names.put("Kate", false);
+        names.put("Daniel", false);
     }
 
     public void mainLoop()
@@ -96,6 +98,7 @@ public class CheckInHelper {
             rfid.writeToCard(name);
             rgb.setColor(green);
             names.put(name, false);
+            lcd.clearDisplay();
             lcd.writeText("Write Successful");
             result = true;
         }
@@ -116,6 +119,8 @@ public class CheckInHelper {
         boolean result = this.names.containsKey(name);
         if (result){
             this.names.remove(name);
+            lcd.clearDisplay();
+            lcd.writeText(name + " successfully removed.");
         }
         return result;
     }

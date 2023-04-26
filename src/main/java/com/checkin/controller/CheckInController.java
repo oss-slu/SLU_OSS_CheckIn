@@ -11,7 +11,6 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import jakarta.inject.Named;
 
-
 @Controller("/checkin")
 public class CheckInController {
     private final CheckInHelper helper;
@@ -48,18 +47,17 @@ public class CheckInController {
     }
 
     @Get("/removeCard/{name}")
-    public Boolean removeCard(String name){
-        return helper.removeCard(name);
+    public void removeCard(String name){
+        helper.removeCard(name);
     }
 
     @Get("/newCard/{name}")
-    public Boolean addNewCard(String name){
+    public void addNewCard(String name){
         try {
-            return helper.addNewCard(name);
+            helper.addNewCard(name);
         }
         catch (InterruptedException e){
             System.out.println(e.toString());
-            return false;
         }
     }
 }
