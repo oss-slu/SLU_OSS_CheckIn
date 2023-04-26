@@ -1,7 +1,37 @@
 micronaut:
   application:
     name: SLU_OSS_CheckIn
-netty:
-  default:
-    allocator:
-      max-order: 3
+pi4j:
+  spi:
+    rfid:
+      name: MFRC522
+      address: 8
+      baud: 500000
+      reset-pin: 25
+  pwm:
+    red-pwm:
+      name: red
+      address: 17
+      pwmType: SOFTWARE
+      provider: pigpio-pwm
+      initial: 0
+      shutdown: 0
+    green-pwm:
+      name: green
+      address: 27
+      pwmType: SOFTWARE
+      provider: pigpio-pwm
+      initial: 0
+      shutdown: 0
+    blue-pwm:
+      name: blue
+      address: 18
+      pwmType: SOFTWARE
+      provider: pigpio-pwm
+      initial: 0
+      shutdown: 0
+  i2c:
+    lcd:
+      name: lcd
+      bus: 1
+      device: 0x27
