@@ -9,24 +9,30 @@
 	<?php
 		$ch = curl_init();
 
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		// Set request method to POST
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+
+		// Set timeout to 0 seconds to disable waiting for response
+		curl_setopt($ch, CURLOPT_TIMEOUT, 0);
+
+		// Disable response output
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
 
 		if(isset($_POST['start'])) {		
 			curl_setopt($ch, CURLOPT_URL, "http://tdrpi.local:8080/checkin/init");
-			$init = curl_exec($ch);
+			curl_exec($ch);
 		}
 
 		if(isset($_POST['add'])) {		
 			// get the text from the form
 			$text = $_POST['addUser'];
 			
-			$curl = 'http://tdrpi.local:8080/checkin/addNewCard/'.$text;
-
+			$curl = 'http://tdrpi.local:8080/checkin/newCard/'.$text;
+			
 			curl_setopt($ch, CURLOPT_URL, $curl);
-			$addNewCard = curl_exec($ch);
+			curl_exec($ch);
 		}
-
+		
 		if(isset($_POST['remove'])) {		
 			// get the text from the form
 			$text = $_POST['removeUser'];
@@ -34,18 +40,25 @@
 			$curl = 'http://tdrpi.local:8080/checkin/removeCard/'.$text;
 			
 			curl_setopt($ch, CURLOPT_URL, $curl);
-			$removeCard = curl_exec($ch);
+			curl_exec($ch);
 		}
+
+		curl_close($ch);
+
+		$ch = curl_init();
+		
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
 
 		curl_setopt($ch, CURLOPT_URL, 'http://tdrpi.local:8080/checkin/getAllCards');
 		$allCards = curl_exec($ch);
 		
 		curl_setopt($ch, CURLOPT_URL, 'http://tdrpi.local:8080/checkin/getCheckedIn');
 		$checkedIn = curl_exec($ch);
-
+		
 		curl_setopt($ch, CURLOPT_URL, 'http://tdrpi.local:8080/checkin/getCheckedOut');
 		$checkedOut = curl_exec($ch);
-
+		
 		curl_close($ch);
 	?>
 
