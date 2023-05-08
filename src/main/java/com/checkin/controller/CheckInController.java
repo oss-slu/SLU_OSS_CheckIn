@@ -15,9 +15,12 @@ import jakarta.inject.Named;
 public class CheckInController {
     private final CheckInHelper helper;
 
-    public CheckInController(@Named("rfid") SpiConfig spi, @Named("lcd") I2CConfig i2CConfig,
-                             @Named("red-pwm") Pwm red, @Named("blue-pwm") Pwm blue, @Named("green-pwm") Pwm green,
-                             Context pi4jContext){
+    public CheckInController(@Named("rfid") SpiConfig spi, 
+                            @Named("lcd") I2CConfig i2CConfig,
+                            @Named("red-pwm") Pwm red, 
+                            @Named("blue-pwm") Pwm blue, 
+                            @Named("green-pwm") Pwm green,
+                            Context pi4jContext){
         this.helper = new CheckInHelper(spi, i2CConfig, red, blue, green, pi4jContext);
     }
 
