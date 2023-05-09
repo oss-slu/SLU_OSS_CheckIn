@@ -1,5 +1,8 @@
 package com.checkin.helper;
 
+import com.checkin.controller.Person;
+import com.checkin.controller.PersonDTO;
+import com.checkin.controller.PersonRepository;
 import com.opensourcewithslu.inputdevices.RFidHelper;
 import com.opensourcewithslu.outputdevices.LCD1602Helper;
 import com.opensourcewithslu.outputdevices.RGBLEDHelper;
@@ -8,6 +11,12 @@ import com.pi4j.io.i2c.I2CConfig;
 import com.pi4j.io.pwm.Pwm;
 import com.pi4j.io.spi.SpiConfig;
 import io.micronaut.context.annotation.Prototype;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.PathVariable;
+import io.micronaut.http.annotation.Post;
+
 import java.util.HashMap;
 
 
@@ -19,16 +28,20 @@ public class CheckInHelper {
 
     private HashMap<String, Boolean> names;
 
+    private PersonRepository personRepository;
+
+
     int[] red = new int[] {100, 0, 0};
     int[] green = new int[] {0, 100, 0};
 
     public CheckInHelper(SpiConfig spi, I2CConfig i2CConfig,
                          Pwm red, Pwm blue, Pwm green,
-                         Context pi4jContext){
+                         Context pi4jContext, PersonRepository personRepository){
 
         this.rfid = new RFidHelper(spi, 25, pi4jContext);
         this.rgb = new RGBLEDHelper(red, blue, green);
         this.lcd = new LCD1602Helper(i2CConfig, pi4jContext);
+        this.personRepository = personRepository;
 
         // temporary hashmap in place of h2 db
         this.names = new HashMap<String, Boolean>();
@@ -39,7 +52,7 @@ public class CheckInHelper {
     }
 
     public void mainLoop()
-        throws InterruptedException{
+            throws InterruptedException{
 
         lcd.writeText("Welcome to OSS");
         Thread.sleep(3000);
@@ -50,11 +63,11 @@ public class CheckInHelper {
             // if valid read
             try{
                 Object name = rfid.readFromCard();
-                boolean inMap = this.names.containsKey(name.toString());
+                Boolean inMap = this.names.containsKey(name.toString());
                 // if in hashmap
                 if (inMap){
                     rgb.setColor(green);
-                    boolean checkedIn = this.names.get(name.toString());
+                    Boolean checkedIn = this.names.get(name.toString());
                     // if already checked in
                     if (checkedIn) {
                         this.names.put(name.toString(), false);
@@ -84,19 +97,39 @@ public class CheckInHelper {
         }
     }
 
-    public boolean addNewCard(String name)
-        throws InterruptedException{
+    public Boolean addNewCard(String name)
+            throws InterruptedException{
         rfid.resetScanner();
         rgb.ledOff();
         lcd.writeText("Please scan a card for " + name);
         rfid.writeToCard(name);
         rgb.setColor(green);
-        names.put(name, false);
+//        names.put(name, false);
         lcd.writeText("Write Successful");
         Thread.sleep(2000);
         lcd.clearDisplay();
         rgb.ledOff();
 
         return true;
+    }
+
+    @Post("/")
+    public HttpResponse<Person> create(@Body PersonDTO pd) {
+        String firstName = pd.getFirstName();
+        Boolean checkedIn = pd.getStatus();
+        return HttpResponse.created(this.personRepository.save(firstName, checkedIn));
+    }
+    public HttpResponse<Person> createFromName(@PathVariable String name) {
+        PersonDTO pd = new PersonDTO(name, false);
+        HttpResponse<Person> person;
+        try {
+            addNewCard(name);
+        }
+        catch (InterruptedException e){
+            System.out.println(e.toString());
+        }
+        person = create(pd);
+
+        return person;
     }
 }
