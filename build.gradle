@@ -17,7 +17,8 @@ dependencies {
     implementation("jakarta.annotation:jakarta.annotation-api")
     runtimeOnly("ch.qos.logback:logback-classic")
     implementation("io.micronaut:micronaut-validation")
-    implementation files("libs/micronautpi4j-utils-v0.1.1-all.jar")
+    //implementation files("libs/micronautpi4j-utils-v0.1.1-all.jar")
+    implementation("io.github.oss-slu:pi4micronaut-utils:v1.1:all")
 }
 
 
